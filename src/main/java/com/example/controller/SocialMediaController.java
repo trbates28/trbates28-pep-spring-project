@@ -4,6 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import com.example.service.AccountService;
 import com.example.service.MessageService;
@@ -16,11 +20,11 @@ import java.util.*;
  * where applicable as well as the @ResponseBody and @PathVariable annotations. You should
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
-@Controller
-@RequestMapping("social")
+@RestController
 public class SocialMediaController {
 
     private AccountService accountService;
+    @Autowired
     private MessageService messageService;
 
   public void setAccountService(AccountService accountService) {
@@ -31,10 +35,9 @@ public class SocialMediaController {
     this.messageService = messageService;
   }
 
-  @RequestMapping(method = RequestMethod.GET)
-  public @ResponseBody List<Message> getMessages() {
-
-    return null;
+  @GetMapping("/messages")
+  public ResponseEntity getAllMessages() {
+    return ResponseEntity.status(200).header("content-type", "application/json").body(messageService.getAllMessages());
 
   }
 
