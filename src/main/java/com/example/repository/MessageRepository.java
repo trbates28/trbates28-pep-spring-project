@@ -31,6 +31,10 @@ public interface MessageRepository extends JpaRepository<Message, Long>  {
     @Transactional
     void insertNewMessage(@Param("postedBy") int postedBy, @Param("messageText") String messageText, @Param("timePostedEpoch") Long timePostedEpoch);
   
+    @Modifying
+    @Query("UPDATE Message m SET m.messageText = :messageText WHERE m.messageId = :messageId")
+    @Transactional
+    void patchMessageById(@Param("messageText") String messageText, @Param("messageId") int messageId);
 
     @Modifying
     @Query("DELETE FROM Message m WHERE m.messageId = :messageId")

@@ -43,6 +43,15 @@ public class MessageService {
 
     }
 
+    public boolean patchMessageById(int message, String body) {
+   
+    if (messageRepository.findById(message) == null || body == "" || body.length() > 255) {
+        return false; 
+    }
+    messageRepository.patchMessageById(body, message);
+    return true;
+}
+
     @Transactional
     public Message insertNewMessage(Message message) {
        if (accountRepository.findById(message.getPostedBy()) == null || message.getMessageText() == "" || message.getMessageText().length() > 255) {

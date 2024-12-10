@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.*;
 @RestController
 public class SocialMediaController {
 
+    @Autowired
     private AccountService accountService;
     @Autowired
     private MessageService messageService;
@@ -40,6 +42,21 @@ public class SocialMediaController {
     this.messageService = messageService;
   }
 
+  @PostMapping("/register")
+  public ResponseEntity submitAccount(@RequestBody Account account){ 
+    
+    if (account.getUsername() == "" || account.getPassword().length() < 4) {
+      return ResponseEntity.status(400).header("content-type", "application/json").body(account);
+    }                           
+    boolean newAccount = accountService.insertNewAccount(account);
+    if (newAccount) {
+      return ResponseEntity.status(200).header("content-type", "application/json").body(account);
+    }
+    else {
+      return ResponseEntity.status(409).header("content-type", "application/json").body(account);
+    }
+  }
+  
   @PostMapping("/messages")
   public ResponseEntity submitInfo(@RequestBody Message message){
 
@@ -49,13 +66,13 @@ public class SocialMediaController {
 
     return ResponseEntity.status(200).header("content-type", "application/json").body(message);
   }
+
   @DeleteMapping("/messages/{messageId}")
   public ResponseEntity deleteMessage(@PathVariable int messageId) {
     if (messageService.deleteById(messageId)) {
       return ResponseEntity.status(200).header("content-type", "application/json").body(1);
     }
     return ResponseEntity.status(200).header("content-type", "application/json").body(null);
-  
   }
 
   @GetMapping("/messages")
@@ -70,6 +87,14 @@ public class SocialMediaController {
   @GetMapping("/messages/{message_id}")
   public ResponseEntity getMessageById(@PathVariable int message_id) {
     return ResponseEntity.status(200).header("content-type", "application/json").body(messageService.getMessageById(message_id));
+  }
+
+  @PatchMapping("/messages/{messageId}")
+  public ResponseEntity patchMessageById(@PathVariable int messageId, @RequestBody Map<String, Object> requestBody) {
+    if (messageService.patchMessageById(messageId, (String) requestBody.get("messageText"))) {
+      return ResponseEntity.status(200).header("content-type", "application/json").body(1);
+    }
+    return ResponseEntity.status(400).header("content-type", "application/json").body(null);
   }
 
 }
