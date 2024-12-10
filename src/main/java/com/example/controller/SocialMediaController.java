@@ -56,6 +56,15 @@ public class SocialMediaController {
       return ResponseEntity.status(409).header("content-type", "application/json").body(account);
     }
   }
+
+  @PostMapping("/login")
+  public ResponseEntity login(@RequestBody Account account) {
+    Account dataBaseAccount = accountService.login(account);
+    if (dataBaseAccount == null) {
+      return ResponseEntity.status(401).header("content-type", "application/json").body(account);
+    }
+    return ResponseEntity.status(200).header("content-type", "application/json").body(dataBaseAccount);
+  }
   
   @PostMapping("/messages")
   public ResponseEntity submitInfo(@RequestBody Message message){

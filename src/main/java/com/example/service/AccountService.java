@@ -29,4 +29,16 @@ public class AccountService {
     return true;  
 }
 
+@Transactional
+public Account login(Account account) {
+
+Account dbAccount = accountRepository.findByUser(account.getUsername());
+
+if (dbAccount == null  || !dbAccount.getUsername().equals(account.getUsername()) || 
+    !dbAccount.getPassword().equals(account.getPassword())) {
+    return null;
+}
+return dbAccount;  
+}
+
 }
