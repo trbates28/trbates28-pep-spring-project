@@ -1,13 +1,10 @@
 package com.example.service;
 
-import java.util.List;
 import com.example.entity.Account;
 import com.example.repository.AccountRepository;
-import com.example.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 public class AccountService {
@@ -16,23 +13,23 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public Account getAccountById(int accountId) {
-        return accountRepository.findById(accountId);
+        return accountRepository.findById(accountId).orElse(null);
     } 
 
     @Transactional
     public boolean insertNewAccount(Account account) {
 
-    if (accountRepository.findByUser(account.getUsername()) != null) {
+    if (accountRepository.findByUsername(account.getUsername()) != null) {
             return false; 
     }
-    accountRepository.insertNewAccount(account.getUsername(), account.getPassword());
+    accountRepository.save(account);
     return true;  
 }
 
 @Transactional
 public Account login(Account account) {
 
-Account dbAccount = accountRepository.findByUser(account.getUsername());
+Account dbAccount = accountRepository.findByUsername(account.getUsername());
 
 if (dbAccount == null  || !dbAccount.getUsername().equals(account.getUsername()) || 
     !dbAccount.getPassword().equals(account.getPassword())) {
