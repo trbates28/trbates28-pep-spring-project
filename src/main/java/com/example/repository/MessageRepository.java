@@ -15,7 +15,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface MessageRepository extends JpaRepository<Message, Long>  {
 
-    List<Message> findAll();
 
     @Query("SELECT m FROM Message m WHERE m.messageId = :messageId")
     Message findById(@Param("messageId") int messageId);
